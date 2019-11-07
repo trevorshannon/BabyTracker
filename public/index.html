@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>BabyTracker v1.0</title>
+  </head>
+  <body>
+    <h1>BabyTracker v1.0</h1>
+    <button id="sign-in">Sign in</button>
+    <button id="sign-out" hidden>Sign out</button>
+    <div id="user-name" hidden></div>
+    <img style="width:100px;height:100px" id="profile-pic" hidden>
+
+    <div id="data-entry" hidden>
+      <div>
+        Date:
+        <input type="date" id="date">
+      </div>
+      
+      <div>
+        Time:
+        <input type="time" id="time">
+      </div>
+
+      <div>
+        Note:
+        <input type="text">
+      </div>
+
+      <h2>Feeds</h2>
+      <button id="feed-left">( Lefty )</button>
+      <button id="feed-right">( Righty )</button>
+
+      <h2>Sleeps</h2>
+      <button id="sleep-start">Sleep started</button>
+      <button id="sleep-end">Sleep ended</button>
+
+      <h2>Meds</h2>
+      <button id="timolol">Timolol</button>
+      <button id="nystatin">Nystatin</button>
+      <button id="vit-d">Vitamin D</button>
+    </div>
+    <div id="data-summary" hidden>
+    </div>
+
+    <!-- update the version number as needed -->
+    <script src="/__/firebase/7.2.3/firebase-app.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script src="/__/firebase/7.2.3/firebase-auth.js"></script>
+    <script src="/__/firebase/7.2.3/firebase-firestore.js"></script>
+    <script src="/__/firebase/7.2.3/firebase-messaging.js"></script>
+    <!-- initialize the SDK after all desired features are loaded -->
+    <script src="/__/firebase/init.js"></script>
+    <script src="main.js"></script>
+  </body>
+</html>
