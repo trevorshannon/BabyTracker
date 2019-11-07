@@ -35,7 +35,7 @@ function isUserSignedIn() {
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
-    return url + '?sz=150';
+    return url + '?sz=50';
   }
   return url;
 }
@@ -86,6 +86,10 @@ function initializeDateTime() {
   time.value = (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute);
 }
 
+function recordEvent(category, detail) {
+  console.log('recording: ', category, detail, date.value, time.value, note.value);
+}
+
 // initialize Firebase
 initFirebaseAuth();
 
@@ -99,8 +103,24 @@ let dataEntry = document.getElementById('data-entry');
 let dataSummary = document.getElementById('data-summary');
 let date = document.getElementById('date');
 let time = document.getElementById('time');
+let note = document.getElementById('note');
+let feedLeft = document.getElementById('feed-left');
+let feedRight = document.getElementById('feed-right');
+let sleepStart = document.getElementById('sleep-start');
+let sleepEnd = document.getElementById('sleep-end');
+let medTimolol = document.getElementById('med-timolol');
+let medNystatin = document.getElementById('med-nystatin');
+let medVitd = document.getElementById('med-vitd');
+
 
 signOutButton.addEventListener('click', signOut);
 signInButton.addEventListener('click', signIn);
+feedLeft.addEventListener('click', (event) => {recordEvent('feed', 'left')});
+feedRight.addEventListener('click', (event) => {recordEvent('feed', 'right')});
+sleepStart.addEventListener('click', (event) => {recordEvent('sleep', 'start')});
+sleepEnd.addEventListener('click', (event) => {recordEvent('sleep', 'end')});
+medTimolol.addEventListener('click', (event) => {recordEvent('med', 'timolol')});
+medNystatin.addEventListener('click', (event) => {recordEvent('med', 'nystatin')});
+medVitd.addEventListener('click', (event) => {recordEvent('med', 'nystatin')});
 
 initializeDateTime();
