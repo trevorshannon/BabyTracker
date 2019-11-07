@@ -48,6 +48,9 @@ function authStateObserver(user) {
     var picUrl = getProfilePicUrl();
     var name = getUserName();
 
+    // TODO better security.
+    if (name != 'Katie Dektar' && name != 'Trevor Shannon') return;
+
     // Set the user's profile pic and name.
     userPicture.setAttribute('src', addSizeToGoogleProfilePic(picUrl));
     userName.textContent = name;
@@ -78,16 +81,27 @@ function authStateObserver(user) {
 
 function initializeDateTime() {
   let now = new Date();
-  let day = now.getDay();
-  let month = now.getMonth();
+  let day = now.getDate();
+  let month = now.getMonth() + 1;
   date.value = now.getFullYear() + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day);
   let hour = now.getHours();
   let minute = now.getMinutes();
   time.value = (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute);
 }
 
-function recordEvent(category, detail) {
-  console.log('recording: ', category, detail, date.value, time.value, note.value);
+function recordEvent(category, type) {
+  console.log('recording: ', category, type, date.value, time.value, note.value);
+  // Add a new entry to the Firebase firestore.
+  let recordedTime = new Date(date.value + " " + time.value);
+  return firebase.firestore().collection(category).add({
+    user: getUserName(),
+    note: note.value,
+    type: type,
+    time: firebase.firestore.Timestamp.fromDate(recordedTime),
+    timeAdded: firebase.firestore.FieldValue.serverTimestamp()
+  }).catch(function(error) {
+    console.error('Error writing new message to Firebase Database', error);
+  });
 }
 
 // initialize Firebase
@@ -115,12 +129,12 @@ let medVitd = document.getElementById('med-vitd');
 
 signOutButton.addEventListener('click', signOut);
 signInButton.addEventListener('click', signIn);
-feedLeft.addEventListener('click', (event) => {recordEvent('feed', 'left')});
-feedRight.addEventListener('click', (event) => {recordEvent('feed', 'right')});
-sleepStart.addEventListener('click', (event) => {recordEvent('sleep', 'start')});
-sleepEnd.addEventListener('click', (event) => {recordEvent('sleep', 'end')});
-medTimolol.addEventListener('click', (event) => {recordEvent('med', 'timolol')});
-medNystatin.addEventListener('click', (event) => {recordEvent('med', 'nystatin')});
-medVitd.addEventListener('click', (event) => {recordEvent('med', 'nystatin')});
+feedLeft.addEventListener('click', (event) => {recordEvent('feeds', 'left')});
+feedRight.addEventListener('click', (event) => {recordEvent('feeds', 'right')});
+sleepStart.addEventListener('click', (event) => {recordEvent('sleeps', 'start')});
+sleepEnd.addEventListener('click', (event) => {recordEvent('sleeps', 'end')});
+medTimolol.addEventListener('click', (event) => {recordEvent('meds', 'timolol')});
+medNystatin.addEventListener('click', (event) => {recordEvent('meds', 'nystatin')});
+medVitd.addEventListener('click', (event) => {recordEvent('meds', 'nystatin')});
 
 initializeDateTime();
