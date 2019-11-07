@@ -76,6 +76,15 @@ function authStateObserver(user) {
   }
 }
 
+function initializeDateTime() {
+  let now = new Date();
+  let day = now.getDay();
+  let month = now.getMonth();
+  date.value = now.getFullYear() + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day);
+  let hour = now.getHours();
+  let minute = now.getMinutes();
+  time.value = (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute);
+}
 
 // initialize Firebase
 initFirebaseAuth();
@@ -88,6 +97,10 @@ let userPicture = document.getElementById('profile-pic');
 let userName = document.getElementById('user-name');
 let dataEntry = document.getElementById('data-entry');
 let dataSummary = document.getElementById('data-summary');
+let date = document.getElementById('date');
+let time = document.getElementById('time');
 
 signOutButton.addEventListener('click', signOut);
 signInButton.addEventListener('click', signIn);
+
+initializeDateTime();
