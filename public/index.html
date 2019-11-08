@@ -3,16 +3,19 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>BabyTracker v1.0</title>
   </head>
   <body>
     <h1>BabyTracker v1.0</h1>
-    <button id="sign-in">Sign in</button>
-    <button id="sign-out" hidden>Sign out</button>
-    <div id="user-name" hidden></div>
-    <img style="width:50px;height:50px" id="profile-pic" hidden>
+    <div>
+      <button id="sign-in">Sign in</button>
+      <button id="sign-out" hidden>Sign out</button>
+      <div id="user-name" hidden></div>
+      <img style="width:50px;height:50px" id="profile-pic" hidden>
+    </div>
 
-    <div id="data-entry" hidden>
+    <div id="data-entry" style="display:inline-block; float:left;" hidden>
       <h2>Track a thing</h2>
       <div>
         Date:
@@ -42,7 +45,9 @@
       <button id="med-nystatin">Nystatin</button>
       <button id="med-vitd">Vitamin D</button>
     </div>
-    <div id="data-summary" hidden>
+    <div id="data-summary" hidden style="display:inline-block">
+      <h2>Recent entries</h2>
+      <table id="entries"></table>
     </div>
 
     <!-- update the version number as needed -->
