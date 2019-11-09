@@ -81,8 +81,8 @@ function authStateObserver(user) {
 // Template for messages.
 const ENTRY_TEMPLATE =
     '<tr class="entry-container">' +
-      '<td class="time"></td>' +
       '<td class="category"></td>' +
+      '<td class="time"></td>' +
       '<td class="type"></td>' +
       '<td class="note"></td>' +
       '<td><button>X</button></td>' +
@@ -96,7 +96,8 @@ function createAndInsertEntry(category, id, timestamp) {
   div.setAttribute('id', id);
   div.setAttribute('time', timestamp);
   let confirmButton = div.firstChild.lastChild.firstChild;
-  div.firstChild.lastChild.previousSibling.firstChild.addEventListener('click', (event) => {confirmButton.removeAttribute('hidden')});
+  div.firstChild.lastChild.previousSibling.firstChild.addEventListener('click', 
+  		(event) => {confirmButton.removeAttribute('hidden')});
   confirmButton.addEventListener('click', (event) => {deleteEntry(category, id)});
 
   // figure out where to insert new data entry.
@@ -144,10 +145,34 @@ function displayEntry(id, timestamp, category, type, note) {
   let time = new Date(timestamp.toMillis());
   let dateString = (time.getMonth() + 1) + "/" + time.getDate() + "/" + time.getFullYear();
   let hours = time.getHours();
-  let timeString = (hours > 12 ? hours - 12 : hours) + ":" + (time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()) + " " + (hours > 12 ? "PM" : "AM");
+  let hoursString = hours == 0 ? 12 : (hours > 12 ? hours - 12 : hours);
+  let timeString = hoursString + ":" + (time.getMinutes() < 10 ? "0" + time.getMinutes() : time.getMinutes()) + 
+  		" " + (hours >= 12 ? "PM" : "AM");
+  let categoryString = '';
+  let typeString = '';
+  switch (category) {
+  	case 'feeds':
+  		categoryString = '🍼';
+  		typeString = 'fed on ' + type;
+  		break;
+  	case 'sleeps':
+  		categoryString = '😴';
+  		typeString = 'sleep ' + type + 'ed';
+  		break;
+  	case 'meds':
+  		categoryString = '💊';
+  		typeString = 'took ' + type;
+  		break;
+  	case 'pumps':
+  		categoryString = '👩‍🔬';
+  		typeString = 'pumped ' + type;
+  		break;
+  	default: 
+  		categoryString = category;
+  }
   div.querySelector('.time').textContent = dateString+ " " + timeString;
-  div.querySelector('.category').textContent = category;
-  div.querySelector('.type').textContent = type;
+  div.querySelector('.category').textContent = categoryString;
+  div.querySelector('.type').textContent = typeString;
   div.querySelector('.note').textContent = note;
 }
 
@@ -155,7 +180,8 @@ function initializeDateTime() {
   let now = new Date();
   let day = now.getDate();
   let month = now.getMonth() + 1;
-  date.value = now.getFullYear() + "-" + (month < 10 ? "0" + month : month) + "-" + (day < 10 ? "0" + day : day);
+  date.value = now.getFullYear() + "-" + (month < 10 ? "0" + month : month) + "-" + 
+  		(day < 10 ? "0" + day : day);
   let hour = now.getHours();
   let minute = now.getMinutes();
   time.value = (hour < 10 ? "0" + hour : hour) + ":" + (minute < 10 ? "0" + minute : minute);
