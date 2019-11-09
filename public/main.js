@@ -95,7 +95,6 @@ function createAndInsertEntry(category, id, timestamp) {
   const div = container.firstChild;
   div.setAttribute('id', id);
   div.setAttribute('time', timestamp);
-  //div.setAttribute('class', "entry-row");
   let confirmButton = div.firstChild.lastChild.firstChild;
   div.firstChild.lastChild.previousSibling.firstChild.addEventListener('click', (event) => {confirmButton.removeAttribute('hidden')});
   confirmButton.addEventListener('click', (event) => {deleteEntry(category, id)});

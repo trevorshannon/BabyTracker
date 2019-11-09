@@ -1,5 +1,27 @@
 body {
 	font-family:monospace;
+	background-color: black;
+	color: white;
+}
+
+h1 {
+  color: #888;
+}
+
+h2 {
+  color: #AAA;
+}
+
+.auth {
+	float:right;
+	width:200px;
+}
+
+#profile-pic {
+	width:50px;
+	height:50px;
+	float:left;
+	margin-right:6px;"
 }
 
 .time {
@@ -17,7 +39,30 @@ body {
 
 .entry-container {
   animation: new-entry 2s ease;
-  outline: 2px white solid;
+  outline: 2px black solid;
+}
+
+button {
+	background-color: #555;
+	border: 2px #444 solid;
+	color: white;
+	font-family:monospace;
+	margin: 2px 0 2px 0;
+}
+
+input {
+	background-color: #444;
+	border: 2px #555 solid;
+	color: white;
+	margin: 2px;
+	font-family:monospace;
+}
+
+select {
+	background-color: #555;
+	border: 2px #444 solid;
+	color: white;	
+	font-family:monospace;
 }
 
 @keyframes new-entry {
@@ -29,6 +74,6 @@ body {
     	opacity: 1;
     }
     100% {
-        outline-color: #FFF;
+        outline-color: #000;
     }
 }
