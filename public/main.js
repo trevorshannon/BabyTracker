@@ -35,7 +35,7 @@ function isUserSignedIn() {
 // Adds a size to Google Profile pics URLs.
 function addSizeToGoogleProfilePic(url) {
   if (url.indexOf('googleusercontent.com') !== -1 && url.indexOf('?') === -1) {
-    return url + '?sz=50';
+    return url + '?sz=40';
   }
   return url;
 }
@@ -43,7 +43,7 @@ function addSizeToGoogleProfilePic(url) {
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 function authStateObserver(user) {
-  if (user && (getUserName() == 'Katie Dektar' || getUserName() == 'Trevor Shannon')) { // User is signed in!
+  if (user) { // User is signed in!
   	loadRecentData();
 
     // Get the signed-in user's profile pic and name.
@@ -85,8 +85,8 @@ const ENTRY_TEMPLATE =
       '<td class="category"></td>' +
       '<td class="type"></td>' +
       '<td class="note"></td>' +
-      '<td><button>Remove</button></td>' +
-      '<td><button hidden>Confirm remove</button></td>' +
+      '<td><button>X</button></td>' +
+      '<td><button hidden>Sure?</button></td>' +
     '</tr>';
 
 function createAndInsertEntry(category, id, timestamp) {
@@ -188,7 +188,7 @@ function deleteEntry(category, id) {
 function loadRecentData() {
   let categories;
   if (entriesFilter.value == 'all') {
-  	categories = ['feeds', 'sleeps', 'meds'];
+  	categories = ['feeds', 'sleeps', 'meds', 'pumps'];
   } else {
   	categories = [entriesFilter.value];
   }
@@ -231,10 +231,13 @@ let time = document.getElementById('time');
 let note = document.getElementById('note');
 let feedLeft = document.getElementById('feed-left');
 let feedRight = document.getElementById('feed-right');
+let feedBottle = document.getElementById('feed-bottle');
 let sleepStart = document.getElementById('sleep-start');
 let sleepEnd = document.getElementById('sleep-end');
 let medTimolol = document.getElementById('med-timolol');
 let medNystatin = document.getElementById('med-nystatin');
+let pumpLeft = document.getElementById('pump-left');
+let pumpRight = document.getElementById('pump-right');
 let medVitd = document.getElementById('med-vitd');
 let entryListElement = document.getElementById('entries');
 let entriesFilter = document.getElementById('entry-filter');
@@ -244,6 +247,9 @@ signOutButton.addEventListener('click', signOut);
 signInButton.addEventListener('click', signIn);
 feedLeft.addEventListener('click', (event) => {recordEvent('feeds', 'left')});
 feedRight.addEventListener('click', (event) => {recordEvent('feeds', 'right')});
+feedBottle.addEventListener('click', (event) => {recordEvent('feeds', 'bottle')});
+pumpLeft.addEventListener('click', (event) => {recordEvent('pumps', 'left')});
+pumpRight.addEventListener('click', (event) => {recordEvent('pumps', 'right')});
 sleepStart.addEventListener('click', (event) => {recordEvent('sleeps', 'start')});
 sleepEnd.addEventListener('click', (event) => {recordEvent('sleeps', 'end')});
 medTimolol.addEventListener('click', (event) => {recordEvent('meds', 'timolol')});
