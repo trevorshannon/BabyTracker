@@ -1,3 +1,7 @@
+body {
+	font-family:monospace;
+}
+
 .time {
 }
 
@@ -9,4 +13,22 @@
 }
 
 .type {
+}
+
+.entry-container {
+  animation: new-entry 2s ease;
+  outline: 2px white solid;
+}
+
+@keyframes new-entry {
+    0% {
+        opacity: 0;
+        outline-color: #F00;
+    }
+    30% {
+    	opacity: 1;
+    }
+    100% {
+        outline-color: #FFF;
+    }
 }

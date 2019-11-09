@@ -43,13 +43,12 @@ function addSizeToGoogleProfilePic(url) {
 
 // Triggers when the auth state change for instance when the user signs-in or signs-out.
 function authStateObserver(user) {
-  if (user) { // User is signed in!
+  if (user && (getUserName() == 'Katie Dektar' || getUserName() == 'Trevor Shannon')) { // User is signed in!
+  	loadRecentData();
+
     // Get the signed-in user's profile pic and name.
     var picUrl = getProfilePicUrl();
     var name = getUserName();
-
-    // TODO better security.
-    if (name != 'Katie Dektar' && name != 'Trevor Shannon') return;
 
     // Set the user's profile pic and name.
     userPicture.setAttribute('src', addSizeToGoogleProfilePic(picUrl));
@@ -86,7 +85,7 @@ const ENTRY_TEMPLATE =
       '<td class="category"></td>' +
       '<td class="type"></td>' +
       '<td class="note"></td>' +
-      '<td><button>Remove?</button></td>' +
+      '<td><button>Remove</button></td>' +
       '<td><button hidden>Confirm remove</button></td>' +
     '</tr>';
 
@@ -96,6 +95,7 @@ function createAndInsertEntry(category, id, timestamp) {
   const div = container.firstChild;
   div.setAttribute('id', id);
   div.setAttribute('time', timestamp);
+  //div.setAttribute('class', "entry-row");
   let confirmButton = div.firstChild.lastChild.firstChild;
   div.firstChild.lastChild.previousSibling.firstChild.addEventListener('click', (event) => {confirmButton.removeAttribute('hidden')});
   confirmButton.addEventListener('click', (event) => {deleteEntry(category, id)});
@@ -116,7 +116,7 @@ function createAndInsertEntry(category, id, timestamp) {
         );
       }
 
-      if (entryListNodeTime > timestamp) {
+      if (entryListNodeTime < timestamp) {
         break;
       }
 
@@ -187,9 +187,16 @@ function deleteEntry(category, id) {
 }
 
 function loadRecentData() {
-  ['feeds', 'sleeps', 'meds'].forEach((category, index) => {
+  let categories;
+  if (entriesFilter.value == 'all') {
+  	categories = ['feeds', 'sleeps', 'meds'];
+  } else {
+  	categories = [entriesFilter.value];
+  }
+  // TODO delete all.
+  categories.forEach((category, index) => {
 	  // Create the query to load entries and listen for new ones.
-	  var query = firebase.firestore().collection(category).orderBy('time', 'desc');
+	  var query = firebase.firestore().collection(category).orderBy('time', 'asc');
 	  
 	  // Start listening to the query.
 	  query.onSnapshot(function(snapshot) {
@@ -203,6 +210,10 @@ function loadRecentData() {
 	    });
 	  });
 	});
+}
+
+function clearEntries() {
+  entryListElement.innerHTML = "";
 }
 
 // initialize Firebase
@@ -226,7 +237,8 @@ let sleepEnd = document.getElementById('sleep-end');
 let medTimolol = document.getElementById('med-timolol');
 let medNystatin = document.getElementById('med-nystatin');
 let medVitd = document.getElementById('med-vitd');
-var entryListElement = document.getElementById('entries');
+let entryListElement = document.getElementById('entries');
+let entriesFilter = document.getElementById('entry-filter');
 
 
 signOutButton.addEventListener('click', signOut);
@@ -238,6 +250,6 @@ sleepEnd.addEventListener('click', (event) => {recordEvent('sleeps', 'end')});
 medTimolol.addEventListener('click', (event) => {recordEvent('meds', 'timolol')});
 medNystatin.addEventListener('click', (event) => {recordEvent('meds', 'nystatin')});
 medVitd.addEventListener('click', (event) => {recordEvent('meds', 'vitamin d')});
+entriesFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
 
 initializeDateTime();
-loadRecentData();

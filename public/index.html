@@ -15,7 +15,7 @@
       <img style="width:50px;height:50px" id="profile-pic" hidden>
     </div>
 
-    <div id="data-entry" style="display:inline-block; float:left;" hidden>
+    <div id="data-entry" hidden>
       <h2>Track a thing</h2>
       <div>
         Date:
@@ -45,8 +45,14 @@
       <button id="med-nystatin">Nystatin</button>
       <button id="med-vitd">Vitamin D</button>
     </div>
-    <div id="data-summary" hidden style="display:inline-block">
+    <div id="data-summary" hidden>
       <h2>Recent entries</h2>
+      <select id="entry-filter">
+        <option value="all">All</option>
+        <option value="feeds">Feeds</option>
+        <option value="sleeps">Sleeps</option>
+        <option value="meds">Meds</option>
+      </select>
       <table id="entries"></table>
     </div>
 
