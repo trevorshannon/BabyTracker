@@ -221,24 +221,61 @@ function loadRecentData() {
   // TODO delete all.
   categories.forEach((category, index) => {
 	  // Create the query to load entries and listen for new ones.
-	  var query = firebase.firestore().collection(category).orderBy('time', 'asc');
+	  var query = firebase.firestore().collection(category).orderBy('time', 'desc');
 	  
 	  // Start listening to the query.
 	  query.onSnapshot(function(snapshot) {
+	    let items = [];
 	    snapshot.docChanges().forEach(function(change) {
 	      if (change.type === 'removed') {
 	        deleteHtmlEntry(change.doc.id);
 	      } else {
 	        var data = change.doc.data();
 	        displayEntry(change.doc.id, data.time, category, data.type, data.note);
+	        items.push({'time': data.time.toMillis(), 'type': data.type});
 	      }
 	    });
+	    analyzeData(category, items);
 	  });
 	});
 }
 
+function analyzeData(category, items) {
+  let now = new Date();
+  let yesterday = new Date(now.getTime() - 24*60*60*1000);
+  if (category == 'sleeps') {
+  	let sleepDuration = 0;
+  	if (items[0].type == 'start') {
+  	  items = [{'time': now.getTime(), 'type': 'end'}].concat(items);
+  	}
+  	for (let i = 0; i < items.length - 1; i+=2) {
+  	  if (items[i].time < yesterday.getTime()) {
+  	  	break;
+  	  }
+  	  if (items[i + 1].time < yesterday.getTime()) {
+  	  	items[i+1].time = yesterday.getTime();
+  	  }
+  	  if (items[i].type != 'end' || items[i+1].type != 'start') {
+  	  	console.log('Missed logging a sleep!');
+  	  	i += 1;
+  	  }
+  	  sleepDuration += items[i].time - items[i+1].time;
+  	}
+  	sleepAnalysis.innerHTML = parseFloat(sleepDuration / (60 * 60 * 1000)).toFixed(2);
+  } else if (category == 'feeds') {
+  	let count = 0;
+  	for (let i = 0; i < items.length; i++) {
+  	  if (items[i].time < yesterday.getTime()) {
+  	  	break;
+  	  }
+  	  count += 1;
+  	}
+  	feedAnalysis.innerHTML = count;
+  }
+}
+
 function clearEntries() {
-  entryListElement.innerHTML = "";
+  entryListElement.innerHTML = '';
 }
 
 // initialize Firebase
@@ -267,7 +304,8 @@ let pumpRight = document.getElementById('pump-right');
 let medVitd = document.getElementById('med-vitd');
 let entryListElement = document.getElementById('entries');
 let entriesFilter = document.getElementById('entry-filter');
-
+let feedAnalysis = document.getElementById('feed-analysis');
+let sleepAnalysis = document.getElementById('sleep-analysis');
 
 signOutButton.addEventListener('click', signOut);
 signInButton.addEventListener('click', signIn);

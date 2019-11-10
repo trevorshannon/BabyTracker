@@ -48,6 +48,14 @@ h3 {
   outline: 2px black solid;
 }
 
+#feed-analysis {
+  color: #FF4444;
+}
+
+#sleep-analysis {
+  color: #FF4444;
+}
+
 button {
 	background-color: #555;
 	border: 2px #444 solid;
