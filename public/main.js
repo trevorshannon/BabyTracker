@@ -138,6 +138,30 @@ function deleteHtmlEntry(id) {
   }
 }
 
+function removeEntryFromCache(category, id) {
+  for (let i = 0; i < cachedData[category].length; i++) {
+  	if (cachedData[category][i].id === id) {
+  		cachedData[category].splice(i, 1);
+  		return;
+  	}
+  }
+}
+
+function addEntryToCache(category, entry) {
+  // Assume cached data is already in the right order.
+  for (let i = 0; i < cachedData[category].length; i++) {
+  	if (entry.time > cachedData[category][i].time) {
+  	  cachedData[category] = [entry].concat(cachedData[category]);
+  	  return;
+  	}
+  	if (entry.id === cachedData[category][i].id) {
+  	  cachedData[category][i] = entry;
+  	  return;
+  	}
+  }
+  cachedData[category].push(entry);
+}
+
 // Displays a data in the UI.
 function displayEntry(id, timestamp, category, type, note) {
   var div = document.getElementById(id) || createAndInsertEntry(category, id, timestamp);
@@ -225,17 +249,17 @@ function loadRecentData() {
 	  
 	  // Start listening to the query.
 	  query.onSnapshot(function(snapshot) {
-	    let items = [];
 	    snapshot.docChanges().forEach(function(change) {
 	      if (change.type === 'removed') {
 	        deleteHtmlEntry(change.doc.id);
+	        removeEntryFromCache(category, change.doc.id);
 	      } else {
 	        var data = change.doc.data();
 	        displayEntry(change.doc.id, data.time, category, data.type, data.note);
-	        items.push({'time': data.time.toMillis(), 'type': data.type});
+	        addEntryToCache(category, {'time': data.time.toMillis(), 'type': data.type, 'id': change.doc.id});
 	      }
 	    });
-	    analyzeData(category, items);
+	    analyzeData(category, cachedData[category]);
 	  });
 	});
 }
@@ -253,7 +277,7 @@ function analyzeData(category, items) {
   	  	break;
   	  }
   	  if (items[i + 1].time < yesterday.getTime()) {
-  	  	items[i+1].time = yesterday.getTime();
+  	  	items[i + 1].time = yesterday.getTime();
   	  }
   	  if (items[i].type != 'end' || items[i+1].type != 'start') {
   	  	console.log('Missed logging a sleep!');
@@ -271,6 +295,7 @@ function analyzeData(category, items) {
   	  count += 1;
   	}
   	feedAnalysis.innerHTML = count;
+  	nextSide.innerHTML = items[0].type == 'left' ? 'Righty' : 'Lefty';
   }
 }
 
@@ -280,6 +305,9 @@ function clearEntries() {
 
 // initialize Firebase
 initFirebaseAuth();
+
+// Store recent entries locally.
+let cachedData = {'sleeps': [], 'feeds': [], 'pumps': [], 'meds': []};
 
 // Remove the warning about timstamps change. 
 var firestore = firebase.firestore();
@@ -299,6 +327,7 @@ let sleepStart = document.getElementById('sleep-start');
 let sleepEnd = document.getElementById('sleep-end');
 let medTimolol = document.getElementById('med-timolol');
 let medNystatin = document.getElementById('med-nystatin');
+let medFluc = document.getElementById('med-fluc');
 let pumpLeft = document.getElementById('pump-left');
 let pumpRight = document.getElementById('pump-right');
 let medVitd = document.getElementById('med-vitd');
@@ -306,6 +335,7 @@ let entryListElement = document.getElementById('entries');
 let entriesFilter = document.getElementById('entry-filter');
 let feedAnalysis = document.getElementById('feed-analysis');
 let sleepAnalysis = document.getElementById('sleep-analysis');
+let nextSide = document.getElementById('next-side');
 
 signOutButton.addEventListener('click', signOut);
 signInButton.addEventListener('click', signIn);
@@ -318,6 +348,7 @@ sleepStart.addEventListener('click', (event) => {recordEvent('sleeps', 'start')}
 sleepEnd.addEventListener('click', (event) => {recordEvent('sleeps', 'end')});
 medTimolol.addEventListener('click', (event) => {recordEvent('meds', 'timolol')});
 medNystatin.addEventListener('click', (event) => {recordEvent('meds', 'nystatin')});
+medFluc.addEventListener('click', (event) => {recordEvent('meds', 'fluconazole')});
 medVitd.addEventListener('click', (event) => {recordEvent('meds', 'vitamin d')});
 entriesFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
 
