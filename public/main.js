@@ -245,6 +245,7 @@ function loadRecentData() {
   // TODO delete all.
   categories.forEach((category, index) => {
 	  // Create the query to load entries and listen for new ones.
+	  // TODO: Limit to fewer entries.
 	  var query = firebase.firestore().collection(category).orderBy('time', 'desc');
 	  
 	  // Start listening to the query.
@@ -295,6 +296,7 @@ function analyzeData(category, items) {
   	  count += 1;
   	}
   	feedAnalysis.innerHTML = count;
+  	// TODO: Go back further in case this was a bottle feed.
   	nextSide.innerHTML = items[0].type == 'left' ? 'Righty' : 'Lefty';
   }
 }
@@ -326,7 +328,6 @@ let feedBottle = document.getElementById('feed-bottle');
 let sleepStart = document.getElementById('sleep-start');
 let sleepEnd = document.getElementById('sleep-end');
 let medTimolol = document.getElementById('med-timolol');
-let medNystatin = document.getElementById('med-nystatin');
 let medFluc = document.getElementById('med-fluc');
 let pumpLeft = document.getElementById('pump-left');
 let pumpRight = document.getElementById('pump-right');
@@ -347,7 +348,6 @@ pumpRight.addEventListener('click', (event) => {recordEvent('pumps', 'right')});
 sleepStart.addEventListener('click', (event) => {recordEvent('sleeps', 'start')});
 sleepEnd.addEventListener('click', (event) => {recordEvent('sleeps', 'end')});
 medTimolol.addEventListener('click', (event) => {recordEvent('meds', 'timolol')});
-medNystatin.addEventListener('click', (event) => {recordEvent('meds', 'nystatin')});
 medFluc.addEventListener('click', (event) => {recordEvent('meds', 'fluconazole')});
 medVitd.addEventListener('click', (event) => {recordEvent('meds', 'vitamin d')});
 entriesFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
