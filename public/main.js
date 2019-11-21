@@ -272,11 +272,14 @@ function loadRecentData() {
   } else {
   	categories = [entriesFilter.value];
   }
-  // TODO delete all.
   categories.forEach((category, index) => {
 	  // Create the query to load entries and listen for new ones.
-	  // TODO: Limit to fewer entries.
-	  var query = firebase.firestore().collection(category).orderBy('time', 'desc');
+	  // TODO: Paginate results to reduce count of returned items.
+	  // TODO: Export to CSV.
+	  let now = new Date();
+	  let lastWeek = new firebase.firestore.Timestamp.fromMillis(now.getTime() - 24*60*60*1000*7);
+  	  var query = firebase.firestore().collection(category).where('time', '>', lastWeek)
+  	  		.orderBy('time', 'desc');
 	  
 	  // Start listening to the query.
 	  query.onSnapshot(function(snapshot) {
