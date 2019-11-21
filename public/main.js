@@ -197,7 +197,37 @@ function displayEntry(id, timestamp, category, type, note) {
   div.querySelector('.time').textContent = dateString+ " " + timeString;
   div.querySelector('.category').textContent = categoryString;
   div.querySelector('.type').textContent = typeString;
-  div.querySelector('.note').textContent = note;
+
+  let noteHolder = div.querySelector('.note');
+  let noteSpan = document.createElement('span')
+  if (note) {
+	noteSpan.innerHTML = note;
+  } else {
+  	noteSpan.innerHTML = 'Add note';
+  	noteSpan.setAttribute('class', 'note-prompt');
+  }
+  noteSpan.addEventListener('click', (event) => {
+  	noteSpan.setAttribute('hidden', true);
+	let noteField = document.createElement('input');
+	noteField.setAttribute('type', 'text');
+	noteField.setAttribute('value', note);
+	noteField.setAttribute('placeholder', 'Add note');
+	let saveNote = (event) => {
+	  // Save the new note with category and ID.
+	  firebase.firestore().collection(category).doc(id).update({'note': noteField.value});
+	  noteField.setAttribute('hidden', true);
+	  noteSpan.removeAttribute('hidden');
+	};
+	noteField.addEventListener('change', saveNote);
+	noteField.addEventListener('blur', saveNote);
+	noteHolder.appendChild(noteField);
+	noteField.focus();
+  });
+  
+  while (noteHolder.firstChild) {
+	noteHolder.removeChild(noteHolder.firstChild);
+  }
+  noteHolder.appendChild(noteSpan);
 }
 
 function initializeDateTime() {

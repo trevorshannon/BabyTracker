@@ -34,6 +34,10 @@ h3 {
 }
 
 .note {
+}
+
+.note-prompt {
+  font-style: italic;
   color:#777;
 }
 
