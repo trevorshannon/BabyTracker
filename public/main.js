@@ -277,8 +277,9 @@ function loadRecentData() {
 	  // TODO: Paginate results to reduce count of returned items.
 	  // TODO: Export to CSV.
 	  let now = new Date();
-	  let lastWeek = new firebase.firestore.Timestamp.fromMillis(now.getTime() - 24*60*60*1000*7);
-  	  var query = firebase.firestore().collection(category).where('time', '>', lastWeek)
+	  let days = timeFilter.value;
+	  let then = new firebase.firestore.Timestamp.fromMillis(now.getTime() - 24*60*60*1000*days);
+  	  var query = firebase.firestore().collection(category).where('time', '>', then)
   	  		.orderBy('time', 'desc');
 	  
 	  // Start listening to the query.
@@ -346,6 +347,8 @@ let cachedData = {'sleeps': [], 'feeds': [], 'pumps': [], 'meds': []};
 
 // Remove the warning about timstamps change. 
 var firestore = firebase.firestore();
+firebase.firestore().enablePersistence();
+
 let signInButton = document.getElementById('sign-in');
 let signOutButton = document.getElementById('sign-out');
 let userPicture = document.getElementById('profile-pic');
@@ -355,6 +358,7 @@ let dataSummary = document.getElementById('data-summary');
 let date = document.getElementById('date');
 let time = document.getElementById('time');
 let note = document.getElementById('note');
+let updateTimeButton = document.getElementById('update-time');
 let feedLeft = document.getElementById('feed-left');
 let feedRight = document.getElementById('feed-right');
 let feedBottle = document.getElementById('feed-bottle');
@@ -367,12 +371,14 @@ let pumpRight = document.getElementById('pump-right');
 let medVitd = document.getElementById('med-vitd');
 let entryListElement = document.getElementById('entries');
 let entriesFilter = document.getElementById('entry-filter');
+let timeFilter = document.getElementById('time-filter');
 let feedAnalysis = document.getElementById('feed-analysis');
 let sleepAnalysis = document.getElementById('sleep-analysis');
 let nextSide = document.getElementById('next-side');
 
 signOutButton.addEventListener('click', signOut);
 signInButton.addEventListener('click', signIn);
+updateTimeButton.addEventListener('click', (event) => {initializeDateTime();});
 feedLeft.addEventListener('click', (event) => {recordEvent('feeds', 'left')});
 feedRight.addEventListener('click', (event) => {recordEvent('feeds', 'right')});
 feedBottle.addEventListener('click', (event) => {recordEvent('feeds', 'bottle')});
@@ -383,6 +389,10 @@ sleepEnd.addEventListener('click', (event) => {recordEvent('sleeps', 'end')});
 medTimolol.addEventListener('click', (event) => {recordEvent('meds', 'timolol')});
 medFluc.addEventListener('click', (event) => {recordEvent('meds', 'fluconazole')});
 medVitd.addEventListener('click', (event) => {recordEvent('meds', 'vitamin d')});
+
+// TODO: Don't clear entries and load over again as that creates a lot of read
+// requests to Firebase. Try using the local cache instead.
 entriesFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
+timeFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
 
 initializeDateTime();

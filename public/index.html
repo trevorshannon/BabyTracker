@@ -28,6 +28,7 @@
       <div>
         Time:
         <input type="time" id="time">
+        <button id="update-time">Set to now</button>
       </div>
 
       <div>
@@ -65,6 +66,13 @@
         <option value="sleeps">Sleeps</option>
         <option value="meds">Meds</option>
         <option value="pumps">Pumps</option>
+      </select>
+      <select id="time-filter">
+        <option value="1">One day</option>
+        <option value="3">Three days</option>
+        <option value="7">One week</option>
+        <option value="14">Two weeks</option>
+        <option value="70">Ten weeks</option>
       </select>
       <table id="entries"></table>
     </div>
