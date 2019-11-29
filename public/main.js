@@ -365,7 +365,6 @@ let feedBottle = document.getElementById('feed-bottle');
 let sleepStart = document.getElementById('sleep-start');
 let sleepEnd = document.getElementById('sleep-end');
 let medTimolol = document.getElementById('med-timolol');
-let medFluc = document.getElementById('med-fluc');
 let pumpLeft = document.getElementById('pump-left');
 let pumpRight = document.getElementById('pump-right');
 let medVitd = document.getElementById('med-vitd');
@@ -387,7 +386,6 @@ pumpRight.addEventListener('click', (event) => {recordEvent('pumps', 'right')});
 sleepStart.addEventListener('click', (event) => {recordEvent('sleeps', 'start')});
 sleepEnd.addEventListener('click', (event) => {recordEvent('sleeps', 'end')});
 medTimolol.addEventListener('click', (event) => {recordEvent('meds', 'timolol')});
-medFluc.addEventListener('click', (event) => {recordEvent('meds', 'fluconazole')});
 medVitd.addEventListener('click', (event) => {recordEvent('meds', 'vitamin d')});
 
 // TODO: Don't clear entries and load over again as that creates a lot of read
