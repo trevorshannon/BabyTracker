@@ -303,6 +303,8 @@ function analyzeData(category, items) {
   let now = new Date();
   let yesterday = new Date(now.getTime() - 24*60*60*1000);
   if (category == 'sleeps') {
+  	let timeSinceLastSleep = now.getTime() - items[0].time;
+  	lastSleepTime.innerHTML = (timeSinceLastSleep / (1000 * 60 * 60)).toFixed(2);
   	let sleepDuration = 0;
   	if (items[0].type == 'start') {
   	  items = [{'time': now.getTime(), 'type': 'end'}].concat(items);
@@ -332,6 +334,8 @@ function analyzeData(category, items) {
   	feedAnalysis.innerHTML = count;
   	// TODO: Go back further in case this was a bottle feed.
   	nextSide.innerHTML = items[0].type == 'left' ? 'Righty' : 'Lefty';
+  	let timeSinceLastFeed = now.getTime() - items[0].time;
+  	lastFeedTime.innerHTML = (timeSinceLastFeed / (1000 * 60 * 60)).toFixed(2);
   }
 }
 
@@ -373,6 +377,8 @@ let entriesFilter = document.getElementById('entry-filter');
 let timeFilter = document.getElementById('time-filter');
 let feedAnalysis = document.getElementById('feed-analysis');
 let sleepAnalysis = document.getElementById('sleep-analysis');
+let lastSleepTime = document.getElementById('last-sleep-time');
+let lastFeedTime = document.getElementById('last-feed-time');
 let nextSide = document.getElementById('next-side');
 
 signOutButton.addEventListener('click', signOut);
