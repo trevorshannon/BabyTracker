@@ -300,11 +300,16 @@ function loadRecentData() {
 }
 
 function analyzeData(category, items) {
+  if (items.length == 0) {
+  	return;
+  }
   let now = new Date();
   let yesterday = new Date(now.getTime() - 24*60*60*1000);
   if (category == 'sleeps') {
   	let timeSinceLastSleep = now.getTime() - items[0].time;
-  	lastSleepTime.innerHTML = (timeSinceLastSleep / (1000 * 60 * 60)).toFixed(2);
+  	let minutes = Math.floor(timeSinceLastSleep / (1000 * 60)) % 60;
+  	lastSleepTime.innerHTML = Math.floor(timeSinceLastSleep / (1000 * 60 * 60)) + ':' +
+  		(minutes > 9 ? minutes : '0' + minutes);
   	let sleepDuration = 0;
   	if (items[0].type == 'start') {
   	  items = [{'time': now.getTime(), 'type': 'end'}].concat(items);
@@ -335,7 +340,9 @@ function analyzeData(category, items) {
   	// TODO: Go back further in case this was a bottle feed.
   	nextSide.innerHTML = items[0].type == 'left' ? 'Righty' : 'Lefty';
   	let timeSinceLastFeed = now.getTime() - items[0].time;
-  	lastFeedTime.innerHTML = (timeSinceLastFeed / (1000 * 60 * 60)).toFixed(2);
+  	let minutes = Math.floor(timeSinceLastFeed / (1000 * 60)) % 60;
+  	lastFeedTime.innerHTML = Math.floor(timeSinceLastFeed / (1000 * 60 * 60)) + ':' + 
+  		(minutes > 9 ? minutes : '0' + minutes);
   }
 }
 
@@ -400,3 +407,8 @@ entriesFilter.addEventListener('change', (event) => {clearEntries(); loadRecentD
 timeFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
 
 initializeDateTime();
+setInterval(() => {
+  Object.keys(cachedData).forEach((category) => {
+	analyzeData(category, cachedData[category]);
+  });
+}, 60000);
