@@ -138,6 +138,10 @@ function deleteHtmlEntry(id) {
   }
 }
 
+function compareCachedObjects(first, second) {
+  return second.time - first.time;
+}
+
 function removeEntryFromCache(category, id) {
   for (let i = 0; i < cachedData[category].length; i++) {
   	if (cachedData[category][i].id === id) {
@@ -148,18 +152,17 @@ function removeEntryFromCache(category, id) {
 }
 
 function addEntryToCache(category, entry) {
-  // Assume cached data is already in the right order.
+  // Ensure this isn't a duplicate
   for (let i = 0; i < cachedData[category].length; i++) {
-  	if (entry.time > cachedData[category][i].time) {
-  	  cachedData[category] = [entry].concat(cachedData[category]);
-  	  return;
-  	}
   	if (entry.id === cachedData[category][i].id) {
   	  cachedData[category][i] = entry;
   	  return;
   	}
   }
   cachedData[category].push(entry);
+
+  // Sort cached data.
+  cachedData[category].sort(compareCachedObjects);
 }
 
 // Displays a data in the UI.
