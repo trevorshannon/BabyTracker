@@ -47,6 +47,10 @@ h3 {
 .type {
 }
 
+.error {
+  color: #FF4444;
+}
+
 .entry-container {
   animation: new-entry 2s ease;
   outline: 2px black solid;

@@ -95,6 +95,7 @@ function createAndInsertEntry(category, id, timestamp) {
   const div = container.firstChild;
   div.setAttribute('id', id);
   div.setAttribute('time', timestamp);
+  div.firstChild.removeAttribute('class');
   let confirmButton = div.firstChild.lastChild.firstChild;
   div.firstChild.lastChild.previousSibling.firstChild.addEventListener('click', 
   		(event) => {confirmButton.removeAttribute('hidden')});
@@ -302,6 +303,13 @@ function loadRecentData() {
 	});
 }
 
+function prettyPrintDuration(endTime, startTime) {
+  let timeSinceLastSleep = endTime - startTime;
+  let minutes = Math.floor(timeSinceLastSleep / (1000 * 60)) % 60;
+  return Math.floor(timeSinceLastSleep / (1000 * 60 * 60)) + ':' +
+  	  (minutes > 9 ? minutes : '0' + minutes);
+}
+
 function analyzeData(category, items) {
   if (items.length == 0) {
   	return;
@@ -309,28 +317,32 @@ function analyzeData(category, items) {
   let now = new Date();
   let yesterday = new Date(now.getTime() - 24*60*60*1000);
   if (category == 'sleeps') {
-  	let timeSinceLastSleep = now.getTime() - items[0].time;
-  	let minutes = Math.floor(timeSinceLastSleep / (1000 * 60)) % 60;
-  	lastSleepTime.innerHTML = Math.floor(timeSinceLastSleep / (1000 * 60 * 60)) + ':' +
-  		(minutes > 9 ? minutes : '0' + minutes);
-  	let sleepDuration = 0;
+  	lastSleepTime.innerHTML = prettyPrintDuration(now.getTime(), items[0].time);
+  	let totalSleepDuration = 0;
   	if (items[0].type == 'start') {
   	  items = [{'time': now.getTime(), 'type': 'end'}].concat(items);
   	}
   	for (let i = 0; i < items.length - 1; i+=2) {
-  	  if (items[i].time < yesterday.getTime()) {
-  	  	break;
-  	  }
-  	  if (items[i + 1].time < yesterday.getTime()) {
-  	  	items[i + 1].time = yesterday.getTime();
-  	  }
+  	  if (items[i].time > yesterday.getTime()) {
+  	  	if (items[i + 1].time < yesterday.getTime()) {
+	  	  	items[i + 1].time = yesterday.getTime();
+	  	}
+	  	totalSleepDuration += items[i].time - items[i+1].time;
+	  }
   	  if (items[i].type != 'end' || items[i+1].type != 'start') {
+  	  	document.getElementById(items[i].id).firstChild.setAttribute('class', 'error');
   	  	console.log('Missed logging a sleep!');
   	  	i += 1;
+  	  } else if (items[i].id) {
+  	  	// Clear any errors.
+  	  	document.getElementById(items[i].id).firstChild.removeAttribute('class');
   	  }
-  	  sleepDuration += items[i].time - items[i+1].time;
+  	  let sleepDuration = prettyPrintDuration(items[i].time, items[i+1].time);
+  	  if (items[i].id) {
+	  	  document.getElementById(items[i].id).firstChild.children[2].innerHTML = 'sleep ended (' + sleepDuration + ')';
+	  	}
   	}
-  	sleepAnalysis.innerHTML = parseFloat(sleepDuration / (60 * 60 * 1000)).toFixed(2);
+  	sleepAnalysis.innerHTML = parseFloat(totalSleepDuration / (60 * 60 * 1000)).toFixed(2);
   } else if (category == 'feeds') {
   	let count = 0;
   	for (let i = 0; i < items.length; i++) {
@@ -340,12 +352,9 @@ function analyzeData(category, items) {
   	  count += 1;
   	}
   	feedAnalysis.innerHTML = count;
-  	// TODO: Go back further in case this was a bottle feed.
+  	// TODO: Go back further in case this was a bottle feed or after a pump.
   	nextSide.innerHTML = items[0].type == 'left' ? 'Righty' : 'Lefty';
-  	let timeSinceLastFeed = now.getTime() - items[0].time;
-  	let minutes = Math.floor(timeSinceLastFeed / (1000 * 60)) % 60;
-  	lastFeedTime.innerHTML = Math.floor(timeSinceLastFeed / (1000 * 60 * 60)) + ':' + 
-  		(minutes > 9 ? minutes : '0' + minutes);
+  	lastFeedTime.innerHTML = prettyPrintDuration(now.getTime(), items[0].time);
   }
 }
 
