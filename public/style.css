@@ -76,6 +76,23 @@ h3 {
   color: #FF4444;	
 }
 
+#csv-wrapper {
+  position: relative;
+}
+
+#csv-data {
+  position: absolute;
+  left: 50px;
+  top: -150px;
+  height: 300px;
+  width: 400px;
+  font-family:monospace;
+  background-color: #FFFFFF;
+  white-space: nowrap;
+  overflow: scroll;
+  resize: none;
+}
+
 button {
 	background-color: #555;
 	border: 2px #444 solid;
