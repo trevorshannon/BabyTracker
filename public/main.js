@@ -499,7 +499,6 @@ document.onclick = function(){ csvTextarea.setAttribute('hidden', true); };
 initializeDateTime();
 setInterval(() => {
   Object.keys(cachedData).forEach((category) => {
-  console.log('interval fired.')
 	analyzeData(category, cachedData[category]);
   });
 }, 60000);
