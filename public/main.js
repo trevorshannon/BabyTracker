@@ -166,7 +166,7 @@ function addEntryToCache(category, entry) {
   cachedData[category].sort(compareCachedObjects);
 }
 
-function displayDatetimeString(milliseconds) {
+function datetimeString(milliseconds) {
   let time = new Date(milliseconds);
   let dateString = (time.getMonth() + 1) + "/" + time.getDate() + "/" + time.getFullYear();
   let hours = time.getHours();
@@ -176,7 +176,7 @@ function displayDatetimeString(milliseconds) {
   return dateString + " " + timeString;
 }
 
-function displayTypeString(category, type) {
+function typeString(category, type) {
   let typeString = '';
   switch (category) {
     case 'feeds':
@@ -195,7 +195,7 @@ function displayTypeString(category, type) {
   return typeString;
 }
 
-function displayCategoryString(category) {
+function categoryString(category) {
   let categoryString = '';
   switch (category) {
     case 'feeds':
@@ -228,9 +228,9 @@ function selectedCategories() {
 function displayEntry(id, timestamp, category, type, note) {
   var div = document.getElementById(id) || createAndInsertEntry(category, id, timestamp);
 
-  div.querySelector('.time').textContent = displayDatetimeString(timestamp);
-  div.querySelector('.category').textContent = displayCategoryString(category);
-  div.querySelector('.type').textContent = displayTypeString(category, type);
+  div.querySelector('.time').textContent = datetimeString(timestamp);
+  div.querySelector('.category').textContent = categoryString(category);
+  div.querySelector('.type').textContent = typeString(category, type);
 
   let noteHolder = div.querySelector('.note');
   let noteSpan = document.createElement('span')
@@ -326,8 +326,8 @@ function makeCsv(event) {
             let displayString = ''
             allEvents.forEach(entry => {
               displayString += entry.category + '\t' + 
-                  displayDatetimeString(entry.time) + '\t' +
-                  displayTypeString(entry.category, entry.type) + '\t' +
+                  datetimeString(entry.time) + '\t' +
+                  typeString(entry.category, entry.type) + '\t' +
                   entry.note + '\n';
             })
             csvTextarea.textContent = displayString;
@@ -494,7 +494,11 @@ medVitd.addEventListener('click', (event) => {recordEvent('meds', 'vitamin d')})
 entriesFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
 timeFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
 // A click anywhere outside the CSV textarea should hide it.
-document.onclick = function(){ csvTextarea.setAttribute('hidden', true); };
+document.onclick = function(){ 
+  csvTextarea.setAttribute('hidden', true);
+  // No need to keep that large block of text around anymore.
+  csvTextarea.textContent = '';
+};
 
 initializeDateTime();
 setInterval(() => {
