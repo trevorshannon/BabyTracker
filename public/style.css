@@ -80,17 +80,19 @@ h3 {
   position: relative;
 }
 
-#csv-data {
+#csv-textarea {
   position: absolute;
   left: 50px;
   top: -150px;
   height: 300px;
   width: 400px;
   font-family:monospace;
-  background-color: #FFFFFF;
+  background-color: #555;
+  color: white;
   white-space: nowrap;
   overflow: scroll;
   resize: none;
+  border-width: 0px;
 }
 
 button {

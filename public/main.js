@@ -300,34 +300,41 @@ function deleteEntry(category, id) {
 }
 
 function makeCsv(event) {
-  if (!csvData.hasAttribute('hidden')) {
+  if (!csvTextarea.hasAttribute('hidden')) {
+    // The button only reacts if the textarea is not already visible.
     return;
   }
+  // Prevent the click event from hiding the CSV textarea via bubbling up to document root.
   event.stopPropagation();
   let categories = selectedCategories();
-  // Might not need to initialize with category names.
-  let csvCache = [];
+  let allEvents = [];
+  // For each category, get data from all time and store it locally
   categories.forEach((category, index) => {
     var query = firebase.firestore().collection(category)
         .orderBy('time', 'desc').get().then((querySnapshot) => {
           querySnapshot.forEach((doc) => {
               var data = doc.data();
-              csvCache.push({'category': category, 'time': data.time.toMillis(), 'type': data.type, 'id': doc.id, 'note': data.note});
+              allEvents.push({
+                'category': category,
+                'time': data.time.toMillis(),
+                'type': data.type,
+                'note': data.note});
           });
           if (index === categories.length - 1) {
-            // Final query completed, now populate the data textarea.
-            csvCache.sort(compareCachedObjects);
-            console.log(csvCache);
+            // Final query completed, now populate the data textarea with time-sorted entries.
+            allEvents.sort(compareCachedObjects);
             let displayString = ''
-            csvCache.forEach(entry => {
+            allEvents.forEach(entry => {
               displayString += entry.category + '\t' + 
                   displayDatetimeString(entry.time) + '\t' +
                   displayTypeString(entry.category, entry.type) + '\t' +
                   entry.note + '\n';
             })
-            csvData.textContent = displayString;
-            csvData.removeAttribute('hidden');
-            csvData.select();
+            csvTextarea.textContent = displayString;
+            csvTextarea.removeAttribute('hidden');
+            csvTextarea.select();
+            // The list of events is not needed anymore; delete it to save memory.
+            allEvents = [];
           }
       });
   });
@@ -464,14 +471,14 @@ let lastSleepTime = document.getElementById('last-sleep-time');
 let lastFeedTime = document.getElementById('last-feed-time');
 let nextSide = document.getElementById('next-side');
 let getCsv = document.getElementById('get-csv');
-let csvData = document.getElementById('csv-data');
+let csvTextarea = document.getElementById('csv-textarea');
 
 signOutButton.addEventListener('click', signOut);
 signInButton.addEventListener('click', signIn);
 updateTimeButton.addEventListener('click', (event) => {initializeDateTime();});
 getCsv.addEventListener('click', makeCsv);
 // Prevent clicks inside the csv data textarea from hiding the textarea.
-csvData.addEventListener('click', (event) => {event.stopPropagation()});
+csvTextarea.addEventListener('click', (event) => {event.stopPropagation()});
 feedLeft.addEventListener('click', (event) => {recordEvent('feeds', 'left')});
 feedRight.addEventListener('click', (event) => {recordEvent('feeds', 'right')});
 feedBottle.addEventListener('click', (event) => {recordEvent('feeds', 'bottle')});
@@ -486,7 +493,8 @@ medVitd.addEventListener('click', (event) => {recordEvent('meds', 'vitamin d')})
 // requests to Firebase. Try using the local cache instead.
 entriesFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
 timeFilter.addEventListener('change', (event) => {clearEntries(); loadRecentData()});
-document.onclick = function(){ csvData.setAttribute('hidden', true); };
+// A click anywhere outside the CSV textarea should hide it.
+document.onclick = function(){ csvTextarea.setAttribute('hidden', true); };
 
 initializeDateTime();
 setInterval(() => {
